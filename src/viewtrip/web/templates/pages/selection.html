@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}New trip — ViewTrip{% endblock %}
+{% block content %}
+<h2>Plan a trip</h2>
+{% if error %}<div class="error">{{ error }}</div>{% endif %}
+
+<form action="/trips/results" method="get" class="trip-form">
+  <label>
+    Origin
+    <input type="text" name="origin" required
+           list="origin-list"
+           value="{{ origin or '' }}"
+           hx-get="/stops/search"
+           hx-trigger="input changed delay:200ms, focus"
+           hx-target="#origin-list">
+    <datalist id="origin-list"></datalist>
+  </label>
+
+  <label>
+    Destination
+    <input type="text" name="destination" required
+           list="destination-list"
+           value="{{ destination or '' }}"
+           hx-get="/stops/search"
+           hx-trigger="input changed delay:200ms, focus"
+           hx-target="#destination-list">
+    <datalist id="destination-list"></datalist>
+  </label>
+
+  <label>
+    Date
+    <input type="date" name="date" required value="{{ default_date }}">
+  </label>
+
+  <label>
+    Time
+    <input type="time" name="time" required value="{{ default_time }}">
+  </label>
+
+  <label>
+    Routes
+    <input type="number" name="count" min="1" max="10" value="{{ count or 3 }}" required>
+  </label>
+
+  <button type="submit" class="btn btn-primary">Find trips</button>
+</form>
+{% endblock %}

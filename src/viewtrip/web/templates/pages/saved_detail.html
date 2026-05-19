@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}{{ trip.origin.name }} → {{ trip.destination.name }} — ViewTrip{% endblock %}
+{% block content %}
+<h2>{{ trip.origin.name }} → {{ trip.destination.name }}</h2>
+<p class="muted">
+  Saved {{ trip.saved_at.strftime('%Y-%m-%d %H:%M') }}
+  {% if trip.last_refreshed_at %}· last refreshed {{ trip.last_refreshed_at.strftime('%Y-%m-%d %H:%M') }}{% endif %}
+</p>
+
+<ol class="legs">
+{% for leg in trip.journey.legs %}
+<li>
+  <span class="mode">{{ leg.mode }}</span>
+  {{ leg.origin_name }} {{ leg.departure.strftime('%H:%M') }} → {{ leg.destination_name }} {{ leg.arrival.strftime('%H:%M') }}
+</li>
+{% endfor %}
+</ol>
+
+{% if map_html %}
+{% include "partials/map.html" %}
+{% endif %}
+
+<p style="margin-top:1.5rem"><a href="/saved" class="btn">← Back to saved</a></p>
+{% endblock %}

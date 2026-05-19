@@ -1,0 +1,19 @@
+<li class="saved-row" id="saved-{{ trip.id }}">
+  <a href="/saved/{{ trip.id }}" class="saved-link">
+    <strong>{{ trip.origin.name }} → {{ trip.destination.name }}</strong>
+    <span class="muted">
+      saved {{ trip.saved_at.strftime('%Y-%m-%d %H:%M') }}
+      {% if trip.last_refreshed_at %}· refreshed {{ trip.last_refreshed_at.strftime('%Y-%m-%d %H:%M') }}{% endif %}
+    </span>
+    {% if error %}<span class="error">{{ error }}</span>{% endif %}
+  </a>
+  <button class="btn"
+          hx-post="/saved/{{ trip.id }}/refresh"
+          hx-target="#saved-{{ trip.id }}"
+          hx-swap="outerHTML">Refresh</button>
+  <button class="btn"
+          hx-delete="/saved/{{ trip.id }}"
+          hx-target="#saved-{{ trip.id }}"
+          hx-swap="outerHTML"
+          hx-confirm="Delete this saved trip?">Delete</button>
+</li>

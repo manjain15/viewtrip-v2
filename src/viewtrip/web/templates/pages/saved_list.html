@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block title %}Saved trips — ViewTrip{% endblock %}
+{% block content %}
+<h2>Saved trips</h2>
+{% if not trips %}
+<p>No saved trips yet. <a href="/trips/new">Plan one →</a></p>
+{% else %}
+<ul class="saved-list">
+{% for trip in trips %}
+  {% include "partials/saved_row.html" %}
+{% endfor %}
+</ul>
+{% endif %}
+{% endblock %}

@@ -8,6 +8,8 @@ dependencies = [
     "httpx>=0.27",
     "pydantic>=2.7",
     "pydantic-settings>=2.3",
+    "fastapi[standard]>=0.115",
+    "folium>=0.17",
 ]
 
 [dependency-groups]

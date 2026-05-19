@@ -1,0 +1,151 @@
+:root {
+  --bg: #ffffff;
+  --fg: #111;
+  --muted: #666;
+  --accent: #014421;
+  --accent-light: #d6e7da;
+  --border: #ddd;
+  --error: #c00;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  color: var(--fg);
+  background: var(--bg);
+  margin: 0;
+  line-height: 1.5;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem 2rem;
+  border-bottom: 1px solid var(--border);
+}
+
+header .brand {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+}
+
+header nav { display: flex; gap: 1rem; margin-left: auto; }
+header nav a { color: var(--fg); text-decoration: none; }
+header nav a:hover { color: var(--accent); }
+
+main {
+  max-width: 720px;
+  margin: 2rem auto;
+  padding: 0 2rem;
+}
+
+h2 { margin-top: 0; }
+
+.hero { text-align: center; padding: 2rem 0; }
+.hero h1 { font-size: 2.5rem; margin: 0 0 0.5rem; color: var(--accent); }
+.hero .actions { display: flex; gap: 1rem; justify-content: center; margin-top: 2rem; }
+
+.btn {
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: white;
+  color: var(--fg);
+  text-decoration: none;
+  cursor: pointer;
+  font: inherit;
+}
+.btn:hover { background: var(--accent-light); }
+.btn-primary {
+  background: var(--accent);
+  color: white;
+  border-color: var(--accent);
+}
+.btn-primary:hover { background: #015b2c; color: white; }
+
+.trip-form { display: grid; gap: 1rem; max-width: 400px; }
+.trip-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-weight: 500;
+}
+.trip-form input {
+  padding: 0.5rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  font: inherit;
+}
+.trip-form input:focus { outline: 2px solid var(--accent); outline-offset: -1px; }
+
+.journey {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+.journey > header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  border: none;
+  padding: 0;
+  margin-bottom: 0.5rem;
+}
+.journey .time { font-size: 1.25rem; font-weight: 600; }
+.journey-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.75rem;
+}
+
+.legs { list-style: none; padding: 0; margin: 0.5rem 0; }
+.legs li { padding: 0.25rem 0; }
+.mode {
+  display: inline-block;
+  background: var(--accent);
+  color: white;
+  padding: 0 0.5rem;
+  border-radius: 3px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-right: 0.5rem;
+  min-width: 2rem;
+  text-align: center;
+}
+
+.saved-list { list-style: none; padding: 0; }
+.saved-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  margin-bottom: 0.5rem;
+}
+.saved-link {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
+}
+.saved-link strong { color: var(--accent); }
+
+.muted { color: var(--muted); font-size: 0.85rem; }
+.error { color: var(--error); font-weight: 500; }
+
+.map-frame {
+  width: 100%;
+  height: 400px;
+  border: 0;
+  border-radius: 4px;
+  margin-top: 0.75rem;
+}
+.map-target:empty { display: none; }

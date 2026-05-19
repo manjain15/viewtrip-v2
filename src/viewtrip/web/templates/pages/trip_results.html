@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Trips — ViewTrip{% endblock %}
+{% block content %}
+<h2>{{ origin.name }} → {{ destination.name }}</h2>
+<p class="muted">Departing {{ departure.strftime('%Y-%m-%d %H:%M') }}</p>
+
+{% if not journeys %}
+<p>No journeys returned. <a href="/trips/new">Try again</a>.</p>
+{% endif %}
+
+{% for journey in journeys %}
+<article class="journey">
+  <header>
+    <span class="time">{{ journey.departure.strftime('%H:%M') }} → {{ journey.arrival.strftime('%H:%M') }}</span>
+    <span class="muted">{{ journey.legs|length }} leg{{ 's' if journey.legs|length != 1 else '' }}</span>
+  </header>
+
+  <ol class="legs">
+    {% for leg in journey.legs %}
+    <li>
+      <span class="mode">{{ leg.mode }}</span>
+      {{ leg.origin_name }} {{ leg.departure.strftime('%H:%M') }} → {{ leg.destination_name }} {{ leg.arrival.strftime('%H:%M') }}
+    </li>
+    {% endfor %}
+  </ol>
+
+  <div class="journey-actions">
+    <form method="post" action="/trips/save" style="display:inline">
+      <input type="hidden" name="origin_json" value="{{ origin.model_dump_json() }}">
+      <input type="hidden" name="destination_json" value="{{ destination.model_dump_json() }}">
+      <input type="hidden" name="journey_json" value="{{ journey.model_dump_json() }}">
+      <button type="submit" class="btn">Save</button>
+    </form>
+
+    <input type="hidden" id="journey-{{ loop.index0 }}" name="journey_json" value="{{ journey.model_dump_json() }}">
+    <button class="btn"
+            hx-post="/trips/map"
+            hx-include="#journey-{{ loop.index0 }}"
+            hx-target="#map-{{ loop.index0 }}">
+      Show map
+    </button>
+  </div>
+
+  <div id="map-{{ loop.index0 }}" class="map-target"></div>
+</article>
+{% endfor %}
+{% endblock %}
