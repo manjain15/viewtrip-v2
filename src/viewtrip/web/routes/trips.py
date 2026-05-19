@@ -5,6 +5,7 @@ from fastapi.responses import HTMLResponse, RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from viewtrip.core.models import Journey, SavedTrip, Stop
+from viewtrip.core.validation import validate_departure
 from viewtrip.services.gtfs_cache import StopsIndex
 from viewtrip.services.routing_map import render_journey_map
 from viewtrip.services.tfnsw import TfNSWClient
@@ -48,15 +49,20 @@ async def trip_results(
     stops: StopsIndex = Depends(get_stops_index),
     templates: Jinja2Templates = Depends(get_templates),
 ):
+    error = None
     origin_stop = stops.find_by_name(origin)
     destination_stop = stops.find_by_name(destination)
-
     if not origin_stop or not destination_stop:
+        error = "Origin or destination not found — pick from the suggestions."
+    else:
+        error = validate_departure(date, time)
+
+    if error:
         return templates.TemplateResponse(
             request,
             "pages/selection.html",
             {
-                "error": "Origin or destination not found — pick from the suggestions.",
+                "error": error,
                 "origin": origin,
                 "destination": destination,
                 "default_date": date,

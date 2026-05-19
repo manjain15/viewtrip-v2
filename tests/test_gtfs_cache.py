@@ -88,3 +88,25 @@ async def test_force_refresh_bypasses_cache(tmp_path):
     client2 = FakeClient()
     await cache.load(client2, force_refresh=True)
     assert client2.calls == ["buses", "sydneytrains"]
+
+
+class FailingClient:
+    async def gtfs_stops(self, mode):
+        raise RuntimeError("TfNSW unreachable")
+
+
+async def test_falls_back_to_stale_cache_on_fetch_failure(tmp_path):
+    cache = StopsCache(tmp_path / "cache", ttl_seconds=0)
+    await cache.load(FakeClient())
+    time.sleep(0.01)
+
+    idx = await cache.load(FailingClient())
+    assert len(idx) == 4
+
+
+async def test_fetch_failure_with_no_cache_raises(tmp_path):
+    cache = StopsCache(tmp_path / "cache")
+    import pytest
+
+    with pytest.raises(RuntimeError):
+        await cache.load(FailingClient())

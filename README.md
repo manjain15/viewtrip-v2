@@ -55,6 +55,10 @@ Get one from https://opendata.transport.nsw.gov.au — you need access to:
 
 Put the key in `.env` as `TFNSW_API_KEY=...`. It is loaded via `pydantic-settings` and never committed.
 
+## Security note
+
+Forms (`/trips/save`, `DELETE /saved/{id}`, `POST /saved/{id}/refresh`) have **no CSRF protection** and no authentication. Fine while this is a single-user app bound to localhost — there's no logged-in identity for an attacker to ride. **Add CSRF tokens and auth together** when Phase 4 deploys this anywhere reachable from the public internet.
+
 ## Roadmap
 
 - [x] Phase 1: services + core, fully tested with mocked API

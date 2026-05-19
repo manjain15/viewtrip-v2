@@ -1,5 +1,6 @@
 import asyncio
 import json
+import logging
 import time
 from pathlib import Path
 from typing import Iterable
@@ -8,6 +9,8 @@ from viewtrip.core.models import Stop
 from viewtrip.services.tfnsw import GTFSMode, TfNSWClient
 
 CACHE_TTL_SECONDS = 24 * 60 * 60
+
+logger = logging.getLogger(__name__)
 
 
 class StopsIndex:
@@ -81,7 +84,17 @@ class StopsCache:
     ) -> StopsIndex:
         if not force_refresh and self._is_fresh():
             return StopsIndex(self._load_from_disk())
-        batches = await asyncio.gather(*(client.gtfs_stops(m) for m in modes))
+        try:
+            batches = await asyncio.gather(*(client.gtfs_stops(m) for m in modes))
+        except Exception as exc:
+            if self._file.exists():
+                logger.warning(
+                    "GTFS fetch failed (%s); serving stale cache from %s",
+                    exc,
+                    self._file,
+                )
+                return StopsIndex(self._load_from_disk())
+            raise
         merged: list[Stop] = [s for batch in batches for s in batch]
         self._save_to_disk(merged)
         return StopsIndex(merged)

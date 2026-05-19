@@ -5,7 +5,16 @@
 <p class="muted">Departing {{ departure.strftime('%Y-%m-%d %H:%M') }}</p>
 
 {% if not journeys %}
-<p>No journeys returned. <a href="/trips/new">Try again</a>.</p>
+<section class="empty-state">
+  <p>No journeys found from <strong>{{ origin.name }}</strong> to <strong>{{ destination.name }}</strong> departing {{ departure.strftime('%H:%M on %Y-%m-%d') }}.</p>
+  <p>A few things to try:</p>
+  <ul>
+    <li>Pick a different time — services may not run at this hour.</li>
+    <li>Try a stop a short walk away — your selected stop may not be served by any route.</li>
+    <li>Make sure you picked stops from the autocomplete suggestions.</li>
+  </ul>
+  <a href="/trips/new" class="btn btn-primary">Try a different search</a>
+</section>
 {% endif %}
 
 {% for journey in journeys %}

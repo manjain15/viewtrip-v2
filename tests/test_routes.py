@@ -1,8 +1,11 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from tests.conftest import sample_journey
 
 from viewtrip.core.models import SavedTrip, Stop
+
+FUTURE_DATE = (date.today() + timedelta(days=7)).strftime("%Y-%m-%d")
+FUTURE_TIME = "09:00"
 
 
 def test_start_page(http):
@@ -42,14 +45,46 @@ def test_stops_search_uses_htmx_trigger_name(http):
     assert "Central Station" not in r.text
 
 
+def test_trip_results_rejects_past_date(http):
+    yesterday = (date.today() - timedelta(days=1)).strftime("%Y-%m-%d")
+    r = http.get(
+        "/trips/results",
+        params={
+            "origin": "Town Hall Station",
+            "destination": "Central Station",
+            "date": yesterday,
+            "time": "09:00",
+            "count": 3,
+        },
+    )
+    assert r.status_code == 400
+    assert "past" in r.text.lower()
+
+
+def test_trip_results_rejects_far_future(http):
+    far = (date.today() + timedelta(days=500)).strftime("%Y-%m-%d")
+    r = http.get(
+        "/trips/results",
+        params={
+            "origin": "Town Hall Station",
+            "destination": "Central Station",
+            "date": far,
+            "time": "09:00",
+            "count": 3,
+        },
+    )
+    assert r.status_code == 400
+    assert "400" in r.text
+
+
 def test_trip_results_with_unknown_origin(http):
     r = http.get(
         "/trips/results",
         params={
             "origin": "Nonexistent Stop",
             "destination": "Central Station",
-            "date": "2026-05-19",
-            "time": "09:00",
+            "date": FUTURE_DATE,
+            "time": FUTURE_TIME,
             "count": 3,
         },
     )
@@ -65,8 +100,8 @@ def test_trip_results_renders_journeys(http, fake_client):
         params={
             "origin": "Town Hall Station",
             "destination": "Central Station",
-            "date": "2026-05-19",
-            "time": "09:00",
+            "date": FUTURE_DATE,
+            "time": FUTURE_TIME,
             "count": 3,
         },
     )
@@ -84,13 +119,14 @@ def test_trip_results_no_journeys(http, fake_client):
         params={
             "origin": "Town Hall Station",
             "destination": "Central Station",
-            "date": "2026-05-19",
-            "time": "09:00",
+            "date": FUTURE_DATE,
+            "time": FUTURE_TIME,
             "count": 3,
         },
     )
     assert r.status_code == 200
-    assert "No journeys returned" in r.text
+    assert "No journeys found" in r.text
+    assert "Town Hall Station" in r.text  # echoes the chosen O/D
 
 
 def test_save_trip_persists_and_redirects(http, repo):
