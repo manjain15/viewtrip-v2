@@ -52,3 +52,12 @@ class Journey(BaseModel):
 
 def _parse_ts(value: str) -> datetime:
     return datetime.fromisoformat(value.replace("Z", "+00:00"))
+
+
+class SavedTrip(BaseModel):
+    id: int | None = None
+    origin: Stop
+    destination: Stop
+    saved_at: datetime
+    journey: Journey
+    last_refreshed_at: datetime | None = None

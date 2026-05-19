@@ -6,15 +6,16 @@ The original is preserved as-is.
 
 ## What's in this repo
 
-Phase 1 of the rewrite — the API layer and core domain. No UI yet.
+Phases 1 + 2 of the rewrite — the API layer, core domain, and a SQLite-backed saved-trips repository. No UI yet.
 
 ```
 src/viewtrip/
   core/
     times.py     # Sydney <-> UTC (fixes a TZ bug in v1)
-    models.py    # Stop, Leg, Journey domain types
+    models.py    # Stop, Leg, Journey, SavedTrip domain types
   services/
     tfnsw.py     # async httpx client for Transport for NSW APIs
+    trips_repo.py # SQLite repo for SavedTrip CRUD + refresh
 tests/           # pytest, mocked with pytest-httpx
 ```
 
@@ -40,6 +41,6 @@ Put the key in `.env` as `TFNSW_API_KEY=...`. It is loaded via `pydantic-setting
 ## Roadmap
 
 - [x] Phase 1: services + core, fully tested with mocked API
-- [ ] Phase 2: SQLite-backed saved trips (real itinerary snapshots)
+- [x] Phase 2: SQLite-backed saved trips (real itinerary snapshots)
 - [ ] Phase 3: FastAPI + HTMX UI
 - [ ] Phase 4: deploy
