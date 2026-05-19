@@ -35,8 +35,8 @@ class TfNSWClient:
 
     async def trip(
         self,
-        origin_id: str,
-        destination_id: str,
+        origin: Stop,
+        destination: Stop,
         departure_sydney: datetime,
         *,
         count: int = 5,
@@ -48,10 +48,8 @@ class TfNSWClient:
             "depArrMacro": "dep",
             "itdDate": utc_date,
             "itdTime": utc_time,
-            "type_origin": "any",
-            "name_origin": origin_id,
-            "type_destination": "any",
-            "name_destination": destination_id,
+            **_locate(origin, "origin"),
+            **_locate(destination, "destination"),
             "calcNumberOfTrips": count,
             "TfNSWTR": "true",
             "version": "10.2.1.42",
@@ -65,6 +63,15 @@ class TfNSWClient:
         resp = await self._client.get(GTFS_URL_TEMPLATE.format(mode=mode))
         resp.raise_for_status()
         return _parse_stops_zip(resp.content)
+
+
+def _locate(stop: Stop, role: str) -> dict[str, str]:
+    if stop.lat is not None and stop.lon is not None:
+        return {
+            f"type_{role}": "coord",
+            f"name_{role}": f"{stop.lon}:{stop.lat}:EPSG:4326",
+        }
+    return {f"type_{role}": "stop", f"name_{role}": stop.id}
 
 
 def _parse_stops_zip(content: bytes) -> list[Stop]:

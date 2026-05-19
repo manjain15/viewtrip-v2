@@ -67,8 +67,8 @@ async def saved_refresh(
         raise HTTPException(status_code=404, detail="Saved trip not found")
 
     journeys = await client.trip(
-        trip.origin.name,
-        trip.destination.name,
+        trip.origin,
+        trip.destination,
         datetime.now(),
         count=1,
     )

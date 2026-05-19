@@ -41,7 +41,7 @@ uv run pytest         # 49 tests
 ## Run
 
 ```sh
-uv run fastapi dev src/viewtrip/web/app.py --factory
+uv run uvicorn viewtrip.web:create_app --factory --reload --port 8000
 ```
 
 Then open http://localhost:8000. First boot fetches the GTFS stops feed (~10s); subsequent boots use the cached copy in `~/.viewtrip/cache/` for 24 hours.

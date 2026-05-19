@@ -11,13 +11,16 @@ router = APIRouter()
 @router.get("/search", response_class=HTMLResponse)
 async def search(
     request: Request,
-    q: str = "",
-    target: str = "origin",
     stops: StopsIndex = Depends(get_stops_index),
     templates: Jinja2Templates = Depends(get_templates),
 ):
+    trigger_name = request.headers.get("HX-Trigger-Name", "")
+    if trigger_name and trigger_name in request.query_params:
+        query = request.query_params[trigger_name]
+    else:
+        query = request.query_params.get("q", "")
     return templates.TemplateResponse(
         request,
         "partials/stops_options.html",
-        {"stops": stops.search(q, limit=10), "target": target},
+        {"stops": stops.search(query, limit=10)},
     )

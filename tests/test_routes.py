@@ -31,6 +31,17 @@ def test_stops_search_empty_query(http):
     assert "<option" not in r.text
 
 
+def test_stops_search_uses_htmx_trigger_name(http):
+    r = http.get(
+        "/stops/search",
+        params={"origin": "town", "destination": "", "date": "", "time": ""},
+        headers={"HX-Trigger-Name": "origin"},
+    )
+    assert r.status_code == 200
+    assert "Town Hall Station" in r.text
+    assert "Central Station" not in r.text
+
+
 def test_trip_results_with_unknown_origin(http):
     r = http.get(
         "/trips/results",
@@ -177,7 +188,7 @@ def test_saved_refresh_updates(http, repo, fake_client):
     r = http.post(f"/saved/{trip.id}/refresh")
     assert r.status_code == 200
     assert repo.get(trip.id).last_refreshed_at is not None
-    assert fake_client.trip_calls[0]["origin"] == "Town Hall Station"
+    assert fake_client.trip_calls[0]["origin"].name == "Town Hall Station"
 
 
 def test_trips_map_renders_iframe(http):

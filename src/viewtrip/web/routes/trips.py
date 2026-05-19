@@ -68,8 +68,8 @@ async def trip_results(
 
     departure = datetime.strptime(f"{date} {time}", "%Y-%m-%d %H:%M")
     journeys = await client.trip(
-        origin_stop.name,
-        destination_stop.name,
+        origin_stop,
+        destination_stop,
         departure,
         count=count,
     )

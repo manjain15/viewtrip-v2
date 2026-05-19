@@ -21,16 +21,16 @@ class FakeTfNSW:
 
     async def trip(
         self,
-        origin_id: str,
-        destination_id: str,
+        origin: Stop,
+        destination: Stop,
         departure_sydney: datetime,
         *,
         count: int = 5,
     ) -> list[Journey]:
         self.trip_calls.append(
             {
-                "origin": origin_id,
-                "destination": destination_id,
+                "origin": origin,
+                "destination": destination,
                 "departure": departure_sydney,
                 "count": count,
             }
